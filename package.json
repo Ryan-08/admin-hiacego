@@ -6,6 +6,10 @@
     "start": "next start"
   },
   "dependencies": {
+    "@emotion/react": "^11.10.5",
+    "@headlessui/react": "^1.7.10",
+    "@heroicons/react": "^2.0.15",
+    "@mui/material": "^5.11.8",
     "next": "latest",
     "react": "18.2.0",
     "react-dom": "18.2.0"
