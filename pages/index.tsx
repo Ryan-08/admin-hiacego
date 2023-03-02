@@ -1,9 +1,27 @@
 import type { NextPage } from "next";
 import Head from "next/head";
 import Image from "next/image";
+import { useRouter } from "next/router";
+import { useState } from "react";
+import { useAuth } from "../context/AuthContextProvider";
 import { logo } from "../public";
 
 const Home: NextPage = () => {
+  const [userInfo, setUserInfo] = useState({ email: "", password: "" });
+
+  const { logIn } = useAuth();
+  const router = useRouter();
+
+  const handleSubmit = async (e: any) => {
+    e.preventDefault();
+    const { email, password } = userInfo;
+    try {
+      await logIn(email, password);
+      router.push("/Beranda");
+    } catch (error: any) {
+      console.log(error.message);
+    }
+  };
   return (
     <>
       <Head>
@@ -26,7 +44,10 @@ const Home: NextPage = () => {
           />
           <h1 className="landingPageFont lgnheader1">Selamat Datang</h1>
           <h1 className="landingPageFont lgnheader2">Admin HiaceGo</h1>
-          <form method="post" className="flex flex-col gap-4 items-center ">
+          <form
+            className="flex flex-col gap-4 items-center "
+            onSubmit={handleSubmit}
+          >
             <div className="flex flex-row form-input outline-transparent bg-[#FFFFFF] space-x-2 rounded-full h-[40px] sm:w-[450px] w-[340px] items-center">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -39,9 +60,13 @@ const Home: NextPage = () => {
               </svg>
 
               <input
-                type="text"
+                type="email"
                 className="w-4/5 bg-transparent outline-none placeholder-black"
-                placeholder="NIP/NPM"
+                placeholder="Email"
+                onChange={({ target }) =>
+                  setUserInfo({ ...userInfo, email: target.value })
+                }
+                name="email"
               ></input>
             </div>
             <div className="flex flex-row form-input outline-transparent bg-[#FFFFFF] space-x-2 rounded-full h-[40px] sm:w-[450px] w-[340px] items-center">
@@ -61,6 +86,9 @@ const Home: NextPage = () => {
                 type="password"
                 className="sm:w-4/5 w-60 bg-transparent outline-none placeholder-black"
                 placeholder="Kata Sandi"
+                onChange={({ target }) =>
+                  setUserInfo({ ...userInfo, password: target.value })
+                }
               ></input>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -74,12 +102,15 @@ const Home: NextPage = () => {
               </svg>
             </div>
             <div className="flex mt-3 justify-center">
-              <a
-                href="/beranda"
+              {/* <a
+                href="/Beranda"
                 className="flex justify-center items-center bg-[#3392F1] hover:bg-[#2c85df] btnlogin text-center"
               >
                 Masuk
-              </a>
+              </a> */}
+              <button className="flex justify-center items-center bg-[#3392F1] hover:bg-[#2c85df] btnlogin text-center">
+                Masuk
+              </button>
             </div>
           </form>
         </div>
