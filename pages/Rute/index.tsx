@@ -12,10 +12,23 @@ import iconEdit from "../../assets/icons/iconEdit.svg";
 import iconDelete from "../../assets/icons/iconDelete.svg";
 import axios from "axios";
 import OptionTujuan from "../../components/OptionTujuan";
+import { useRouter } from "next/router";
 
 const rute = () => {
   const [rutes, setRute] = useState([]);
   const [tujuan, setTujuan] = useState("");
+  const [isLoading, setLoading] = useState(false);
+
+  const router = useRouter();
+
+  const handleDelete = async (id: any) => {
+    setLoading(true);
+    console.log(id);
+    await axios
+      .delete(`/api/rute/${id}`)
+      .then(() => router.push("/Rute"))
+      .catch((err) => setLoading(false));
+  };
   useEffect(() => {
     let isMounted = true;
 
@@ -28,7 +41,7 @@ const rute = () => {
     return () => {
       isMounted = false;
     };
-  }, [tujuan]);
+  }, [rutes, tujuan]);
   return (
     <>
       <ProtectedRoute>
@@ -97,21 +110,21 @@ const rute = () => {
                         <td className="flex w-1/12">{`${entry["Key"]}`}</td>
                         <td className="flex w-1/6 justify-around items-center">
                           <Link
-                            href={""}
+                            href={`/Rute/edit/${entry["_key"]}`}
                             className={
                               "p-2 bg-[#1FAA59] rounded-md hover:bg-[#3edd81]"
                             }
                           >
                             <Image src={iconEdit} alt={"edit"} width={20} />
                           </Link>
-                          <Link
-                            href={""}
+                          <button
+                            onClick={() => handleDelete(entry["_key"])}
                             className={
                               "p-2 bg-[#F54748] rounded-md hover:bg-[#ff7373]"
                             }
                           >
                             <Image src={iconDelete} alt={"delete"} width={20} />
-                          </Link>
+                          </button>
                         </td>
                       </tr>
                     ))}

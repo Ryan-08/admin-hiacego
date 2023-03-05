@@ -16,6 +16,7 @@ interface Data {
   noHp: any;
   noTiket: any;
   tujuan: any;
+  rute: any;
   jam: any;
   tanggal: any;
   harga: any;
@@ -35,7 +36,8 @@ const tambah = () => {
     nama: "",
     noHp: "",
     noTiket: "",
-    tujuan: "BIR",
+    tujuan: "",
+    rute: "BIR",
     jam: "",
     tanggal: "",
     harga: "",
@@ -49,33 +51,36 @@ const tambah = () => {
   const router = useRouter();
 
   const handleTujuan = async (event: any) => {
-    var update = event.target.value;
-    var dt = await getHarga(update);
+    var tjuan = event.target.value;
+    var dt = await getHarga(tjuan);
     var fee = dt[0]["Fee"];
-    // console.log(event.target.value);
-    setData({ ...data, tujuan: update });
+    data.tujuan = tjuan;
+    data.rute = dt[0]["Key"];
     setData({ ...data, harga: fee });
+    console.log(data);
   };
   const handleTravel = (event: any) => {
     var update = event.target.value;
     var no = cyrb53(uuidv4()).toString();
-    // setData({ ...data, namaTravel: update });
     data.namaTravel = update;
     setData({ ...data, noTiket: no });
+    console.log(data);
   };
   const handleStatus = (event: any) => {
     var update = event.target.value;
-    console.log(data.namaTravel);
     setData({ ...data, status: update });
+    console.log(data);
   };
   const handleJadwal = (event: any) => {
     var update = event.target.value;
     setData({ ...data, jam: update });
+    console.log(data);
   };
   const handleTanggal = (event: any) => {
     var update = event.target.value;
     var tgl = moment(update).format("DD MMMM YYYY");
     setData({ ...data, tanggal: tgl });
+    console.log(data);
   };
   // const createNoTiket = () => {
 
@@ -94,27 +99,25 @@ const tambah = () => {
     let isMounted = true;
 
     const getRute = async () => {
-      isMounted &&
-        (await axios.get(`/api/rute`).then((res) => {
-          setRute(res.data);
-        }));
+      await axios.get(`/api/rute`).then((res) => {
+        isMounted && setRute(res.data);
+      });
     };
     const getTravel = async () => {
-      isMounted &&
-        (await axios
-          .get(`/api/mobil?rute=${data.tujuan}&jam=${data.jam}`)
-          .then((res) => {
-            setTravels(res.data);
-          }));
+      await axios
+        .get(`/api/mobil?rute=${data.rute}&jam=${data.jam}`)
+        .then((res) => {
+          isMounted && setTravels(res.data);
+        });
     };
-    getTravel();
+
     getRute();
-    console.log(data);
+    getTravel();
 
     return () => {
       isMounted = false;
     };
-  }, [data]);
+  }, [travels, data]);
   return (
     <>
       <ProtectedRoute>

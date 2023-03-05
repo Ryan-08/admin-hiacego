@@ -21,7 +21,10 @@ export default async function handler(req: any, res: any) {
     var data: any[] = [];
     onValue(Tiket, (snapshot: any) => {
       snapshot.forEach((child: any) => {
-        data.push(child.val());
+        data.push({
+          _key: child.key,
+          ...child.val(),
+        });
       });
     });
     if (data != null || data != undefined) {

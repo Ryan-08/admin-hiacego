@@ -12,12 +12,23 @@ import iconEdit from "../../assets/icons/iconEdit.svg";
 import iconDelete from "../../assets/icons/iconDelete.svg";
 import axios from "axios";
 import OptionTujuan from "../../components/OptionTujuan";
+import { useRouter } from "next/router";
 
 const penumpang = () => {
   const [entries, setEntries] = useState([]);
   const [rutes, setRute] = useState([]);
   const [tujuan, setTujuan] = useState("");
   const [isLoading, setLoading] = useState(false);
+  const router = useRouter();
+
+  const handleDelete = async (id: any) => {
+    setLoading(true);
+    console.log(id);
+    await axios
+      .delete(`/api/penumpang/${id}`)
+      .then(() => router.push("/Penumpang"))
+      .catch((err) => setLoading(false));
+  };
 
   useEffect(() => {
     let isMounted = true;
@@ -137,21 +148,21 @@ const penumpang = () => {
                         <td className="flex w-1/6">{`${entry["status"]}`}</td>
                         <td className="flex w-1/6 justify-around items-center">
                           <Link
-                            href={""}
+                            href={`/Penumpang/edit/${entry["_key"]}`}
                             className={
                               "p-2 bg-[#1FAA59] rounded-md hover:bg-[#3edd81]"
                             }
                           >
                             <Image src={iconEdit} alt={"edit"} width={20} />
                           </Link>
-                          <Link
-                            href={""}
+                          <button
+                            onClick={() => handleDelete(entry["_key"])}
                             className={
                               "p-2 bg-[#F54748] rounded-md hover:bg-[#ff7373]"
                             }
                           >
                             <Image src={iconDelete} alt={"delete"} width={20} />
-                          </Link>
+                          </button>
                         </td>
                       </tr>
                     ))}

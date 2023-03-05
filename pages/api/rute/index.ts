@@ -24,7 +24,10 @@ export default async function handler(req: any, res: any) {
     onValue(Rutes, (snapshot: any) => {
       if (snapshot.exists()) {
         snapshot.forEach((child: any) => {
-          data.push(child.val());
+          data.push({
+            _key: child.key,
+            ...child.val(),
+          });
         });
       }
     });

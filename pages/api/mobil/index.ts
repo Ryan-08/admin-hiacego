@@ -14,7 +14,7 @@ export default async function handler(req: any, res: any) {
   const travel = req.query["travel"];
   const rute = req.query["rute"];
   const jam = req.query["jam"];
-  console.log(rute);
+  // console.log(rute);
 
   return new Promise(async (resolve, reject) => {
     const db = getDatabase();
