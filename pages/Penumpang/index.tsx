@@ -66,7 +66,7 @@ const penumpang = () => {
     <>
       <ProtectedRoute>
         <Head>
-          <title>HiaceGo | Daftar Penumpang</title>
+          <title>HiaceGo | Daftar Pesanan</title>
           <link rel="icon" href="/usk.svg" />
         </Head>
         <div className="flex  w-full h-full">
@@ -82,7 +82,7 @@ const penumpang = () => {
             {/* CONTENT */}
             <div className="flex flex-col min-h-screen w-full">
               <Header
-                title="Daftar Penumpang"
+                title="Daftar Pesanan"
                 terminal="Terminal Lueng Bata"
                 icon={iconMobil}
               />
@@ -148,7 +148,7 @@ const penumpang = () => {
                         <td className="flex w-1/6">{`${entry["status"]}`}</td>
                         <td className="flex w-1/6 justify-around items-center">
                           <Link
-                            href={`/Penumpang/edit/${entry["_key"]}`}
+                            href={`/Penumpang/edit/${entry["noTiket"]}`}
                             className={
                               "p-2 bg-[#1FAA59] rounded-md hover:bg-[#3edd81]"
                             }

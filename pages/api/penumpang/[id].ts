@@ -31,7 +31,6 @@ export default async function handler(req: any, res: any) {
       get(child(dbRef, `TIKET/${key}`))
         .then((snapshot) => {
           if (snapshot.exists()) {
-            // console.log(snapshot.val());
             res.status(200).json(snapshot.val());
           } else {
             res.status(404).end();

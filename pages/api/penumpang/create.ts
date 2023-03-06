@@ -11,6 +11,7 @@ export default async function handler(req: any, res: any) {
       travel: data["travel"],
       nama: data["nama"],
       noHp: data["noHp"],
+      noKursi: data["noKursi"],
       noTiket: data["noTiket"],
       tujuan: data["tujuan"],
       jam: data["jam"],
