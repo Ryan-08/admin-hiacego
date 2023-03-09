@@ -10,6 +10,7 @@ import {
 
 export default async function handler(req: any, res: any) {
   const tujuan = req.query["tujuan"];
+  const total = req.query["total"];
   // console.log(tujuan);
   return new Promise(async (resolve, reject) => {
     const db = getDatabase();
@@ -19,8 +20,11 @@ export default async function handler(req: any, res: any) {
       console.log(tujuan);
     }
     var data: any[] = [];
+    var count = 0;
+
     onValue(Tiket, (snapshot: any) => {
       snapshot.forEach((child: any) => {
+        count++;
         data.push({
           _key: child.key,
           ...child.val(),
@@ -28,7 +32,11 @@ export default async function handler(req: any, res: any) {
       });
     });
     if (data != null || data != undefined) {
-      res.status(200).json(data);
+      if (total != null && total) {
+        res.status(200).json(count);
+      } else {
+        res.status(200).json(data);
+      }
       // console.log(data);
     } else {
       res.status(404).end();

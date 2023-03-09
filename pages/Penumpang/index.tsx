@@ -116,16 +116,16 @@ const penumpang = () => {
                   <thead className="w-full bg-[#F6F6F6] p-4 ">
                     <tr className="flex w-full">
                       <th className="flex w-1/12 font-normal">No.</th>
-                      <th className="flex w-1/5 font-normal">Nama</th>
-                      <th className="flex w-1/5 font-normal">Nomor Hp</th>
+                      <th className="flex w-1/6 font-normal">Nama</th>
+                      <th className="flex w-1/6 font-normal">Nomor Hp</th>
                       <th className="flex w-1/6 font-normal">No Tiket</th>
-                      <th className="flex w-1/6 font-normal">Tujuan</th>
-                      <th className="flex w-1/6 font-normal">Jam</th>
-                      <th className="flex w-1/6 font-normal">Tanggal</th>
-                      <th className="flex w-1/6 font-normal">Harga</th>
-                      <th className="flex w-1/6 font-normal">Alamat</th>
-                      <th className="flex w-1/6 font-normal">Status</th>
-                      <th className="flex w-1/6 font-normal justify-center">
+                      <th className="flex w-[11%] font-normal">Tujuan</th>
+                      <th className="flex w-[11%] font-normal">Jam</th>
+                      <th className="flex w-[11%] font-normal">Tanggal</th>
+                      <th className="flex w-[11%] font-normal">Harga</th>
+                      <th className="flex w-[11%] font-normal">Alamat</th>
+                      <th className="flex w-[11%] font-normal">Status</th>
+                      <th className="flex w-[11%] font-normal justify-center">
                         Aksi
                       </th>
                     </tr>
@@ -137,16 +137,16 @@ const penumpang = () => {
                         className="flex w-full items-center py-4 border-b-2"
                       >
                         <td className="flex w-1/12">{index + 1}</td>
-                        <td className="flex w-1/5">{entry["nama"]}</td>
-                        <td className="flex w-1/5">{`${entry["noHp"]}`}</td>
-                        <td className="flex w-1/6">{`${entry["noTiket"]}`}</td>
-                        <td className="flex w-1/6">{`${entry["tujuan"]}`}</td>
-                        <td className="flex w-1/6">{`${entry["jam"]}`}</td>
-                        <td className="flex w-1/6">{`${entry["tanggal"]}`}</td>
-                        <td className="flex w-1/6">{`${entry["harga"]}`}</td>
-                        <td className="flex w-1/6">{`${entry["alamat"]}`}</td>
-                        <td className="flex w-1/6">{`${entry["status"]}`}</td>
-                        <td className="flex w-1/6 justify-around items-center">
+                        <td className="flex w-1/6">{entry["nama"]}</td>
+                        <td className="flex w-1/6 overflow-hidden overflow-ellipsis truncate">{`${entry["noHp"]}`}</td>
+                        <td className="flex w-1/6 overflow-hidden overflow-ellipsis truncate">{`${entry["noTiket"]}`}</td>
+                        <td className="flex w-[11%]">{`${entry["rute"]}`}</td>
+                        <td className="flex w-[11%]">{`${entry["jam"]}`}</td>
+                        <td className="flex w-[11%]">{`${entry["tanggal"]}`}</td>
+                        <td className="flex w-[11%]">{`${entry["harga"]}`}</td>
+                        <td className="flex w-[11%]">{`${entry["alamat"]}`}</td>
+                        <td className="flex w-[11%]">{`${entry["status"]}`}</td>
+                        <td className="flex w-[11%] justify-around items-center">
                           <Link
                             href={`/Penumpang/edit/${entry["noTiket"]}`}
                             className={

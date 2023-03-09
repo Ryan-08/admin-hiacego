@@ -124,7 +124,7 @@ const tambah = () => {
     <>
       <ProtectedRoute>
         <Head>
-          <title>HiaceGo | Tambah Mobil</title>
+          <title>HiaceGo | Tambah Penumpang</title>
           <link rel="icon" href="/usk.svg" />
         </Head>
         <div className="flex  w-full h-full">

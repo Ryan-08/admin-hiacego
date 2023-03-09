@@ -56,7 +56,7 @@ const tambah = () => {
             {/* CONTENT */}
             <div className="flex flex-col min-h-screen w-full">
               <Header
-                title="Tambah Mobil"
+                title="Tambah Rute"
                 terminal="Terminal Lueng Bata"
                 icon={iconMobil}
               />

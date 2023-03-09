@@ -1,5 +1,5 @@
 import Head from "next/head";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import Sidebar from "../../components/Sidebar";
 import Navbar from "../../components/Navbar";
@@ -7,8 +7,89 @@ import { berita } from "../../public";
 import Header from "../../components/Header";
 import iconHome from "../../assets/icons/iconHome.svg";
 import ProtectedRoute from "../../components/ProtectedRoute";
+import Pesanan from "../../components/Pesanan";
+import axios from "axios";
+import Modal from "react-modal";
+import Berita from "../../components/Berita";
+import { useRouter } from "next/router";
+import { type } from "os";
 
+Modal.setAppElement("#__next");
+
+type Data = {
+  judul: string;
+  link: string;
+  konten: string;
+};
 function Beranda() {
+  const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [entries, setEntries] = useState([]);
+  const [beritas, setBeritas] = useState([]);
+  const [total, setTotal] = useState([]);
+  const [mobil, setMobil] = useState([]);
+  const [tujuan, setTujuan] = useState("");
+  const router = useRouter();
+
+  const [data, setData] = useState<Data>({
+    judul: "",
+    link: "",
+    konten: "",
+  });
+
+  const handleOpenModal = () => {
+    setModalIsOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setModalIsOpen(false);
+  };
+  const handleDelete = async (id: any) => {
+    await axios.delete(`/api/berita/${id}`).then(() => router.push("/Beranda"));
+  };
+  const handleSubmit = (e: any) => {
+    e.preventDefault();
+    try {
+      axios.post("/api/berita/create", data);
+    } catch (error: any) {
+      console.log(error.message);
+    }
+    router.push("/Beranda");
+    setModalIsOpen(false);
+  };
+  useEffect(() => {
+    let isMounted = true;
+
+    const getData = async () => {
+      await axios.get(`/api/penumpang?tujuan=${tujuan}`).then((res) => {
+        isMounted && setEntries(res.data);
+      });
+    };
+    const getBerita = async () => {
+      await axios.get(`/api/berita`).then((res) => {
+        isMounted && setBeritas(res.data);
+      });
+    };
+    const getTotal = async () => {
+      await axios
+        .get(`/api/penumpang?tujuan=${tujuan}&total=${true}`)
+        .then((res) => {
+          isMounted && setTotal(res.data);
+        });
+    };
+    const getMobil = async () => {
+      await axios.get(`/api/mobil`).then((res) => {
+        isMounted && setMobil(res.data);
+      });
+    };
+    getBerita();
+    getMobil();
+    getTotal();
+    getData();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [entries, beritas, mobil]);
   return (
     <>
       <ProtectedRoute>
@@ -17,7 +98,7 @@ function Beranda() {
           <link rel="icon" href="/usk.svg" />
         </Head>
 
-        <div className="flex  w-full h-full">
+        <div id="home" className="flex  w-full h-full">
           {/* // SIDEBAR */}
           <Sidebar />
           {/* //END OF SIDEBAR */}
@@ -39,6 +120,7 @@ function Beranda() {
               <div className="flex md:flex-row flex-col justify-between ml-8 mr-8 gap-8">
                 {/* TOPCONTENT 1 */}
                 <a
+                  href={"/Daftar-Mobil/tambah"}
                   className="flex flex-col cursor-pointer h-40 w-1/3 rounded-lg topcontentshadow"
                   style={{
                     background:
@@ -73,7 +155,7 @@ function Beranda() {
                 >
                   <h1 className="pt-4 pl-6 headerhome">Total Penumpang</h1>
                   <div className="flex items-center justify-center w-full h-full">
-                    <h1 className="totalpenumpang">252</h1>
+                    <h1 className="totalpenumpang">{total}</h1>
                   </div>
                 </div>
                 {/*END OF TOPCONTENT 2 */}
@@ -88,7 +170,10 @@ function Beranda() {
                 >
                   <h1 className="pt-4 pl-6 headerhome">Jumlah Mobil</h1>
                   <div className="flex flex-col items-center justify-center pl-6 pr-6 w-full h-full">
-                    <div className="flex justify-around w-full ">
+                    <div className="flex items-center justify-center w-full h-full">
+                      <h1 className="totalpenumpang">{mobil.length}</h1>
+                    </div>
+                    {/* <div className="flex justify-around w-full ">
                       <h1 className="jumlahmobil">14</h1>
                       <span className="jumlahmobildetail">sudah berjalan</span>
                     </div>
@@ -96,7 +181,7 @@ function Beranda() {
                     <div className="flex justify-around w-full ">
                       <h1 className="jumlahmobil">20</h1>
                       <span className="jumlahmobildetail">akan berjalan</span>
-                    </div>
+                    </div> */}
                   </div>
                 </div>
                 {/* END OF TOPCONTENT 3 */}
@@ -109,7 +194,7 @@ function Beranda() {
                 <div className="flex flex-col bg-white bottomcontentshadow p-6 rounded-lg w-3/5">
                   <div className="flex flex-row justify-between mb-6">
                     <h1 className="bottomcontentheader">Pesanan Baru</h1>
-                    <a className="flex cursor-pointer">
+                    <a href="/Penumpang" className="flex cursor-pointer">
                       <h1 className="bottomcontentdetail">Lihat semua</h1>
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -126,117 +211,13 @@ function Beranda() {
                     </a>
                   </div>
                   <div className="flex flex-col gap-4">
-                    <div className="flex flex-row justify-between listpesanan hover:bg-[#C4C4C4] items-center p-3 rounded-md">
-                      <div className="flex flex-col ]">
-                        <h1 className="namapemesan">Ilham Syahputra</h1>
-                        <h1 className="ptpesanan">PT. Bahtera Atakana</h1>
-                      </div>
-                      <div className="flex gap-4">
-                        <a className="flex h-8 w-8 rounded-md justify-center cursor-pointer bg-[#1FAA59] hover:bg-[#0d8f43] items-center">
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 24 24"
-                            fill="white"
-                            className="w-5 h-5"
-                          >
-                            <path
-                              fill-rule="evenodd"
-                              d="M19.916 4.626a.75.75 0 01.208 1.04l-9 13.5a.75.75 0 01-1.154.114l-6-6a.75.75 0 011.06-1.06l5.353 5.353 8.493-12.739a.75.75 0 011.04-.208z"
-                              clip-rule="evenodd"
-                            />
-                          </svg>
-                        </a>
-
-                        <a className="flex h-8 w-8 rounded-md justify-center cursor-pointer bg-[#F54748] hover:bg-[#d32f2f] items-center">
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 24 24"
-                            fill="white"
-                            className="w-5 h-5"
-                          >
-                            <path
-                              fill-rule="evenodd"
-                              d="M5.47 5.47a.75.75 0 011.06 0L12 10.94l5.47-5.47a.75.75 0 111.06 1.06L13.06 12l5.47 5.47a.75.75 0 11-1.06 1.06L12 13.06l-5.47 5.47a.75.75 0 01-1.06-1.06L10.94 12 5.47 6.53a.75.75 0 010-1.06z"
-                              clip-rule="evenodd"
-                            />
-                          </svg>
-                        </a>
-                      </div>
-                    </div>
-                    <div className="flex flex-row justify-between listpesanan hover:bg-[#C4C4C4] items-center p-3 rounded-md">
-                      <div className="flex flex-col ]">
-                        <h1 className="namapemesan">Ilham Syahputra</h1>
-                        <h1 className="ptpesanan">PT. Bahtera Atakana</h1>
-                      </div>
-                      <div className="flex gap-4">
-                        <a className="flex h-8 w-8 rounded-md justify-center cursor-pointer bg-[#1FAA59] hover:bg-[#0d8f43] items-center">
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 24 24"
-                            fill="white"
-                            className="w-5 h-5"
-                          >
-                            <path
-                              fill-rule="evenodd"
-                              d="M19.916 4.626a.75.75 0 01.208 1.04l-9 13.5a.75.75 0 01-1.154.114l-6-6a.75.75 0 011.06-1.06l5.353 5.353 8.493-12.739a.75.75 0 011.04-.208z"
-                              clip-rule="evenodd"
-                            />
-                          </svg>
-                        </a>
-
-                        <a className="flex h-8 w-8 rounded-md justify-center cursor-pointer bg-[#F54748] hover:bg-[#d32f2f] items-center">
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 24 24"
-                            fill="white"
-                            className="w-5 h-5"
-                          >
-                            <path
-                              fill-rule="evenodd"
-                              d="M5.47 5.47a.75.75 0 011.06 0L12 10.94l5.47-5.47a.75.75 0 111.06 1.06L13.06 12l5.47 5.47a.75.75 0 11-1.06 1.06L12 13.06l-5.47 5.47a.75.75 0 01-1.06-1.06L10.94 12 5.47 6.53a.75.75 0 010-1.06z"
-                              clip-rule="evenodd"
-                            />
-                          </svg>
-                        </a>
-                      </div>
-                    </div>
-                    <div className="flex flex-row justify-between listpesanan hover:bg-[#C4C4C4] items-center p-3 rounded-md">
-                      <div className="flex flex-col ]">
-                        <h1 className="namapemesan">Ilham Syahputra</h1>
-                        <h1 className="ptpesanan">PT. Bahtera Atakana</h1>
-                      </div>
-                      <div className="flex gap-4">
-                        <a className="flex h-8 w-8 rounded-md justify-center cursor-pointer bg-[#1FAA59] hover:bg-[#0d8f43] items-center">
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 24 24"
-                            fill="white"
-                            className="w-5 h-5"
-                          >
-                            <path
-                              fill-rule="evenodd"
-                              d="M19.916 4.626a.75.75 0 01.208 1.04l-9 13.5a.75.75 0 01-1.154.114l-6-6a.75.75 0 011.06-1.06l5.353 5.353 8.493-12.739a.75.75 0 011.04-.208z"
-                              clip-rule="evenodd"
-                            />
-                          </svg>
-                        </a>
-
-                        <a className="flex h-8 w-8 rounded-md justify-center cursor-pointer bg-[#F54748] hover:bg-[#d32f2f] items-center">
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 24 24"
-                            fill="white"
-                            className="w-5 h-5"
-                          >
-                            <path
-                              fill-rule="evenodd"
-                              d="M5.47 5.47a.75.75 0 011.06 0L12 10.94l5.47-5.47a.75.75 0 111.06 1.06L13.06 12l5.47 5.47a.75.75 0 11-1.06 1.06L12 13.06l-5.47 5.47a.75.75 0 01-1.06-1.06L10.94 12 5.47 6.53a.75.75 0 010-1.06z"
-                              clip-rule="evenodd"
-                            />
-                          </svg>
-                        </a>
-                      </div>
-                    </div>
+                    {entries.map((entry) => (
+                      <Pesanan
+                        namapemesan={entry["nama"]}
+                        ptpesanan={entry["travel"]}
+                        href={`/Penumpang/edit/${entry["noTiket"]}`}
+                      />
+                    ))}
                   </div>
                 </div>
                 {/* END OF BOTTOM CONTENT 1 */}
@@ -245,7 +226,7 @@ function Beranda() {
                 <div className="flex flex-col bg-white bottomcontentshadow p-6 rounded-lg w-2/5">
                   <div className="flex flex-row justify-between mb-6">
                     <h1 className="bottomcontentheader">Berita</h1>
-                    <a className="cursor-pointer">
+                    <a onClick={handleOpenModal} className="cursor-pointer">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         viewBox="0 0 24 24"
@@ -260,8 +241,82 @@ function Beranda() {
                       </svg>
                     </a>
                   </div>
+                  {/* MODAL */}
+                  <Modal
+                    isOpen={modalIsOpen}
+                    onRequestClose={handleCloseModal}
+                    contentLabel="Example Modal"
+                  >
+                    <h1 className="text-[24px] text-center">Tambah Berita</h1>
+                    <div className="flex flex-row h-full w-full font-semibold">
+                      <div className="flex flex-col bg-[#F6F6F6] w-1/5 h-full rounded-md">
+                        <h3 className="flex w-full h-[14%] items-center px-8 py-4">
+                          Judul Berita
+                        </h3>
+                        <h3 className="flex w-full h-[14%] items-center px-8 py-4">
+                          Konten Berita
+                        </h3>
+                        <h3 className="flex w-full h-[14%] items-center px-8 py-4">
+                          Link Berita
+                        </h3>
+                      </div>
+                      <form
+                        method="post"
+                        className="flex flex-col w-4/5 h-full mx-8"
+                        onSubmit={handleSubmit}
+                      >
+                        <div className="flex flex-col h-full">
+                          <input
+                            type="text"
+                            placeholder="Judul Berita"
+                            className="flex h-[14%] items-center px-8 py-4 focus:border-b-2 outline-none border-b-2 border-black w-full"
+                            onChange={({ target }) =>
+                              setData({ ...data, judul: target.value })
+                            }
+                          />
+                          <input
+                            type="text"
+                            placeholder="Konten Berita"
+                            className="flex h-[14%] items-center px-8 py-4 focus:border-b-2 outline-none border-b-2 border-black w-full"
+                            onChange={({ target }) =>
+                              setData({ ...data, konten: target.value })
+                            }
+                          />
+                          <input
+                            type="text"
+                            placeholder="Link Berita"
+                            className="flex h-[14%] items-center px-8 py-4 focus:border-b-2 outline-none border-b-2 border-black w-full"
+                            onChange={({ target }) =>
+                              setData({ ...data, link: target.value })
+                            }
+                          />
+                        </div>
+                        <div className="flex flex-row -mt-[100px]">
+                          <button
+                            onClick={handleCloseModal}
+                            className="bg-[#f71f1f] w-1/5 p-2 px-4 rounded-md mx-auto text-white font-bold text-center"
+                          >
+                            Close Modal
+                          </button>
+                          <button
+                            type="submit"
+                            className="bg-[#1FA5F7] w-1/5 p-2 px-4 rounded-md mx-auto text-white font-bold text-center"
+                          >
+                            Simpan Data
+                          </button>
+                        </div>
+                      </form>
+                    </div>
+                  </Modal>
                   <div className="flex flex-col gap-4">
-                    <div className="flex flex-row justify-between items-center  rounded-md">
+                    {beritas.map((data) => (
+                      <Berita
+                        sourceImg={berita}
+                        judul={data["judul"]}
+                        handle={() => handleDelete(data["_key"])}
+                      />
+                    ))}
+                    {/* <div className="flex flex-row justify-between items-center  rounded-md">
                       <div className="flex flex-row listberitashadow p-4 rounded-md">
                         <div className="flex flex-col w-40 mr-4 ">
                           <div className="flex bg-[#92d7ff] mb-2 w-12 h-[21px] rounded-md items-center justify-center">
@@ -274,7 +329,10 @@ function Beranda() {
                         </div>
                         <Image src={berita} alt="ico" />
                       </div>
-                      <a className="flex h-10 w-10 rounded-md justify-center cursor-pointer bg-[#F54748] hover:bg-[#d32f2f] items-center">
+                      <a
+                        onClick={handleDelete}
+                        className="flex h-10 w-10 rounded-md justify-center cursor-pointer bg-[#F54748] hover:bg-[#d32f2f] items-center"
+                      >
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           viewBox="0 0 24 24"
@@ -316,7 +374,7 @@ function Beranda() {
                           />
                         </svg>
                       </a>
-                    </div>
+                    </div> */}
                   </div>
                 </div>
                 {/* END OF BOTTOM CONTENT 2 */}

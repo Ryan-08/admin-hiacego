@@ -173,7 +173,7 @@ const Ubah = () => {
     <>
       <ProtectedRoute>
         <Head>
-          <title>HiaceGo | Ubah Mobil</title>
+          <title>HiaceGo | Detail Penumpang</title>
           <link rel="icon" href="/usk.svg" />
         </Head>
         <div className="flex  w-full h-full">
@@ -189,7 +189,7 @@ const Ubah = () => {
             {/* CONTENT */}
             <div className="flex flex-col min-h-screen w-full">
               <Header
-                title="Ubah Mobil"
+                title="Detail Penumpang"
                 terminal="Terminal Lueng Bata"
                 icon={icoMobil}
               />
